@@ -7,23 +7,45 @@
         x:Class="MusicPlayer.Views.MainWindow"
         x:DataType="vm:PlayerViewModel"
         Icon="/Assets/avalonia-logo.ico"
+        CanResize="True"
         Title="MusicPlayer">
 
     <Design.DataContext>
         <!-- This only sets the DataContext for the previewer in an IDE,
              to set the actual DataContext for runtime, set the DataContext property in code (look at App.axaml.cs) -->
-        <vm:MainWindowViewModel/>
+        <vm:PlayerViewModel />
     </Design.DataContext>
-    
+
     <Grid>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="*"/>
-            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
-            <RowDefinition Height="*"/>
+            <RowDefinition Height="*" />
         </Grid.RowDefinitions>
-        
-        <ListBox Grid.Column="1" ItemsSource="{Binding MusicListings}"/>
+
+        <ListBox ItemsSource="{Binding MusicListings}" />
+        <StackPanel Orientation="Vertical" Grid.Column="1" VerticalAlignment="Center">
+            <Image Grid.Column="1" VerticalAlignment="Top" Height="80" Width="80" Source="../Assets/avalonia-logo.ico" />
+            
+            <Slider Width="300" 
+                    Value="{Binding SongProgress}"/>
+            
+            <Slider Width="100" 
+                    Orientation="Horizontal"
+                    Value="{Binding VolumeValue}"/>
+            <TextBlock Text="{Binding VolumeValue}"/>
+            
+            <TextBlock Text="{Binding Current, StringFormat='{}Playing: {0}'}" />
+            
+            <StackPanel VerticalAlignment="Bottom" Orientation="Horizontal" HorizontalAlignment="Center">
+                <Button Command="{Binding ReverseCommand}">back</Button>
+                <Button Content="{Binding IsPlaying}"
+                        Command="{Binding TogglePlayCommand}" />
+                <Button Command="{Binding ForwardCommand}">forward</Button>
+            </StackPanel>
+        </StackPanel>
+
     </Grid>
 </Window>
