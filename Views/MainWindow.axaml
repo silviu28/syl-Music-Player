@@ -26,6 +26,9 @@
         </Grid.RowDefinitions>
 
         <ListBox ItemsSource="{Binding MusicListings}" />
+        <Button Content="Change directory..."
+                Command="{Binding OpenFileDialogCommand}"/>
+        
         <StackPanel Orientation="Vertical" Grid.Column="1" VerticalAlignment="Center">
             <Image Grid.Column="1" VerticalAlignment="Top" Height="80" Width="80" Source="../Assets/avalonia-logo.ico" />
             
@@ -38,6 +41,10 @@
             <TextBlock Text="{Binding VolumeValue}"/>
             
             <TextBlock Text="{Binding Current, StringFormat='{}Playing: {0}'}" />
+            
+            <TextBlock Text="{Binding SongName, StringFormat='{}Name: {0}'}"/>
+            
+            <TextBlock Text="{Binding SongLength, StringFormat='{}Length: {0:2f}'}"/>
             
             <StackPanel VerticalAlignment="Bottom" Orientation="Horizontal" HorizontalAlignment="Center">
                 <Button Command="{Binding ReverseCommand}">back</Button>
