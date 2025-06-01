@@ -7,6 +7,7 @@ using Avalonia.Controls.ApplicationLifetimes;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using MusicPlayer.Models;
+using MusicPlayer.Views;
 using NAudio.Wave;
 
 namespace MusicPlayer.ViewModels;
@@ -154,7 +155,7 @@ public partial class PlayerViewModel : ViewModelBase
         }
         catch (Exception ex)
         {
-            Console.WriteLine(ex);
+            PopupModal.Show($"Something happened: {ex.Message}");
         }
     }
     #endregion
