@@ -4,6 +4,7 @@
     <option name="projectPerEditor">
       <map>
         <entry key="App.axaml" value="MusicPlayer.csproj" />
+        <entry key="Styles.axaml" value="MusicPlayer.csproj" />
         <entry key="Views/MainWindow.axaml" value="MusicPlayer.csproj" />
         <entry key="Views/PlayerListing.axaml" value="MusicPlayer.csproj" />
       </map>
