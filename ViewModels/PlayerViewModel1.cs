@@ -17,7 +17,7 @@ public partial class PlayerViewModel : ViewModelBase
     public ObservableCollection<string> MusicListings { get; set; } = FileReaderService.GetAll();
 
     private int _currentPtr = 0;
-    public string Current => MusicListings[_currentPtr];
+    public string Current => MusicListings.Count > 0 ? MusicListings[_currentPtr] : "none";
 
     public bool IsPlaying { get; set; }
 
