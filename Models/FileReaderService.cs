@@ -1,13 +1,12 @@
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
-using NAudio;
 
 namespace MusicPlayer.Models;
 
 public static class FileReaderService
 {
-    public static string CurrentDirectory { get; set; } = ".";
+    public static string CurrentDirectory { get; set; } = "./music";
 
     public static ObservableCollection<string> GetAll()
     {

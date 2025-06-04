@@ -8,7 +8,8 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using MusicPlayer.Models;
 using MusicPlayer.Views;
-using NAudio.Wave;
+using LibVLCSharp;
+using LibVLCSharp.Shared;
 
 namespace MusicPlayer.ViewModels;
 
@@ -31,67 +32,8 @@ public partial class PlayerViewModel : ViewModelBase
         set => SetProperty(ref _volumeValue, Math.Round(value));
     }
 
-    private void OnButtonPlay(object? sender, EventArgs e)
-    {
-        if (_audioOutput is null)
-        {
-            _audioOutput = new();
-            _audioOutput.PlaybackStopped += OnPlaybackStop;
-        }
-
-        if (_audioReader is null)
-        {
-            _audioReader = new(@".");
-            _audioOutput.Init(_audioReader);
-        }
-
-        _audioOutput.Play();
-    }
-
-    private void OnPlaybackStop(object? sender, EventArgs e)
-    {
-        _audioOutput?.Dispose();
-        _audioOutput = null;
-        _audioReader?.Dispose();
-        _audioReader = null;
-    }
-
-
-    private WaveOutEvent? _audioOutput;
-
-    public WaveOutEvent AudioOutput
-    {
-        get
-        {
-            if (_audioOutput is null)
-            {
-                _audioOutput = new WaveOutEvent();
-                _audioOutput.PlaybackStopped += (_, _) =>
-                {
-                    AudioOutput.Dispose();
-                    _audioOutput = null;
-                    AudioReader.Dispose();
-                    _audioReader = null;
-                };
-            }
-
-            return _audioOutput;
-        }
-    }
-
-    private AudioFileReader? _audioReader;
-    public AudioFileReader AudioReader
-    {
-        get
-        {
-            if (_audioReader is null)
-            {
-                _audioReader = new(Current);
-                AudioOutput.Init(_audioReader);
-            }
-            return _audioReader;
-        }
-    }
+    private LibVLC _VLCinvoke;
+    private MediaPlayer _player;
 
     #region Comms
 
@@ -100,12 +42,23 @@ public partial class PlayerViewModel : ViewModelBase
 
     private void TogglePlay()
     {
-        IsPlaying = !IsPlaying;
-        // if (!IsPlaying)
-        //     AudioOutput.Stop();
-        // else
-        //     AudioOutput.Play();
-        OnPropertyChanged(nameof(this.IsPlaying));
+        try
+        {
+            if (!IsPlaying)
+            {
+                using Media _media = new(_VLCinvoke, Current, FromType.FromPath);
+                _player.Play(_media);
+            }
+            else
+                _player.Stop();
+
+            IsPlaying = !IsPlaying;
+            OnPropertyChanged(nameof(IsPlaying));
+        }
+        catch (Exception ex)
+        {
+            PopupModal.Show(ex.Message);
+        }
     }
 
     private ICommand? _forwardCommand;
@@ -162,5 +115,8 @@ public partial class PlayerViewModel : ViewModelBase
 
     public PlayerViewModel()
     {
+        Core.Initialize();
+        _VLCinvoke = new();
+        _player = new(_VLCinvoke);
     }
 }
