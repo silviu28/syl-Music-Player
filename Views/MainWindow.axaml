@@ -32,12 +32,15 @@
         <StackPanel Orientation="Vertical" Grid.Column="1" VerticalAlignment="Center">
             <Image Grid.Column="1" VerticalAlignment="Top" Height="80" Width="80" Source="../Assets/avalonia-logo.ico" />
             
-            <Slider Width="300" 
-                    Value="{Binding SongProgress}"/>
+            <Slider Name="TimelineSlider"
+				    Width="300" 
+                    Value="{Binding SongProgress, Mode=TwoWay}"/>
             
-            <Slider Width="100" 
+            <Slider Name="VolumeSlider"
+				    Width="100" 
                     Orientation="Horizontal"
-                    Value="{Binding VolumeValue}"/>
+                    Value="{Binding VolumeValue, Mode=TwoWay}"/>
+			
             <TextBlock Text="{Binding VolumeValue}"/>
             
             <TextBlock Text="{Binding Current, StringFormat='{}Playing: {0}'}" />

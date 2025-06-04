@@ -10,6 +10,7 @@ using MusicPlayer.Models;
 using MusicPlayer.Views;
 using LibVLCSharp;
 using LibVLCSharp.Shared;
+using Avalonia.Threading;
 
 namespace MusicPlayer.ViewModels;
 
@@ -22,18 +23,31 @@ public partial class PlayerViewModel : ViewModelBase
 
     public bool IsPlaying { get; set; }
 
-    public double SongProgress { get; set; }
+    public double SongProgress
+    {
+        get => _player.Position * 100;
+        set
+        {
+            _player.Position = (float)(value / 100);
+            OnPropertyChanged(nameof(SongProgress));
+        }
+    }
 
-    private double _volumeValue;
+    private double _volumeValue = 80;
 
     public double VolumeValue
     {
         get => _volumeValue;
-        set => SetProperty(ref _volumeValue, Math.Round(value));
+        set
+        {
+            SetProperty(ref _volumeValue, Math.Round(value));
+            _player.Volume = (int)_volumeValue;
+        }
     }
 
     private LibVLC _VLCinvoke;
     private MediaPlayer _player;
+    private Media? _media;
 
     #region Comms
 
@@ -46,11 +60,21 @@ public partial class PlayerViewModel : ViewModelBase
         {
             if (!IsPlaying)
             {
-                using Media _media = new(_VLCinvoke, Current, FromType.FromPath);
+                if (_media is null)
+                {
+                    _media = new(_VLCinvoke, Current, FromType.FromPath);
+                    _media.Parse();
+
+                    OnPropertyChanged(nameof(SongName));
+                }
                 _player.Play(_media);
+                _timelineTimer.Start();
             }
             else
+            {
                 _player.Stop();
+                _timelineTimer.Stop();
+            }
 
             IsPlaying = !IsPlaying;
             OnPropertyChanged(nameof(IsPlaying));
@@ -88,7 +112,6 @@ public partial class PlayerViewModel : ViewModelBase
             {
                 Title = "Select directory"
             };
-
             var dialogResult =
                 await dialog.ShowAsync(
                     App.Current.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop
@@ -113,10 +136,24 @@ public partial class PlayerViewModel : ViewModelBase
     }
     #endregion
 
+    private DispatcherTimer _timelineTimer;
+
     public PlayerViewModel()
     {
         Core.Initialize();
-        _VLCinvoke = new();
+        _VLCinvoke = new("--no-video-title-show", 
+                         "--file-caching=300",
+                         "--audio-time-stretch");
         _player = new(_VLCinvoke);
+        _timelineTimer = new()
+        {
+            Interval = TimeSpan.FromMilliseconds(100)
+        };
+        _timelineTimer.Tick += MoveTimelineForward;
+    }
+
+    private void MoveTimelineForward(object? sender, EventArgs e)
+    {
+        OnPropertyChanged(nameof(SongProgress));
     }
 }
