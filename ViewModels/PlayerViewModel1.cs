@@ -11,6 +11,7 @@ using MusicPlayer.Views;
 using LibVLCSharp;
 using LibVLCSharp.Shared;
 using Avalonia.Threading;
+using System.Linq;
 
 namespace MusicPlayer.ViewModels;
 

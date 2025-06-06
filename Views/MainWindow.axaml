@@ -8,54 +8,105 @@
         x:DataType="vm:PlayerViewModel"
         Icon="/Assets/avalonia-logo.ico"
         CanResize="True"
-        Title="MusicPlayer">
+        Title="MusicPlayer"
+		Background="{StaticResource ThemeAccentBrush}"
+		TransparencyLevelHint="AcrylicBlur">
 
-    <Design.DataContext>
-        <!-- This only sets the DataContext for the previewer in an IDE,
+	<Design.DataContext>
+		<!-- This only sets the DataContext for the previewer in an IDE,
              to set the actual DataContext for runtime, set the DataContext property in code (look at App.axaml.cs) -->
-        <vm:PlayerViewModel />
-    </Design.DataContext>
+		<vm:PlayerViewModel />
+	</Design.DataContext>
 
-    <Grid>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="*" />
-            <ColumnDefinition Width="*" />
-        </Grid.ColumnDefinitions>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="*" />
-        </Grid.RowDefinitions>
+	<Grid>
+		<Grid.ColumnDefinitions>
+			<ColumnDefinition Width="*" />
+			<ColumnDefinition Width="10*" />
+			<ColumnDefinition Width="20*" />
+			<ColumnDefinition Width="*" />
+		</Grid.ColumnDefinitions>
+		<Grid.RowDefinitions>
+			<RowDefinition Height="*" />
+			<RowDefinition Height="20*" />
+			<RowDefinition Height="*" />
+		</Grid.RowDefinitions>
 
-        <ListBox ItemsSource="{Binding MusicListings}" />
-        <Button Content="Change directory..."
-                Command="{Binding OpenFileDialogCommand}"/>
-        
-        <StackPanel Orientation="Vertical" Grid.Column="1" VerticalAlignment="Center">
-            <Image Grid.Column="1" VerticalAlignment="Top" Height="80" Width="80" Source="../Assets/avalonia-logo.ico" />
-            
-            <Slider Name="TimelineSlider"
-				    Width="300" 
-                    Value="{Binding SongProgress, Mode=TwoWay}"/>
-            
-            <Slider Name="VolumeSlider"
-				    Width="100" 
-                    Orientation="Horizontal"
-                    Value="{Binding VolumeValue, Mode=TwoWay}"/>
-			
-            <TextBlock Text="{Binding VolumeValue}"/>
-            
-            <TextBlock Text="{Binding Current, StringFormat='{}Playing: {0}'}" />
-            
-            <TextBlock Text="{Binding SongName, StringFormat='{}Name: {0}'}"/>
-            
-            <TextBlock Text="{Binding SongLength, StringFormat='{}Length: {0:2f}'}"/>
-            
-            <StackPanel VerticalAlignment="Bottom" Orientation="Horizontal" HorizontalAlignment="Center">
-                <Button Command="{Binding ReverseCommand}">back</Button>
-                <Button Content="{Binding IsPlaying}"
-                        Command="{Binding TogglePlayCommand}" />
-                <Button Command="{Binding ForwardCommand}">forward</Button>
-            </StackPanel>
-        </StackPanel>
+		<StackPanel Grid.Row="1" Grid.Column="1" Orientation="Vertical">
+			<ListBox ItemsSource="{Binding MusicListings}"
+					 ScrollViewer.HorizontalScrollBarVisibility="Auto"/>
+			<Button Content="Change directory..."
+					Command="{Binding OpenFileDialogCommand}"/>
+		</StackPanel>
 
-    </Grid>
+		<!--<Border Background="Gray" Opacity=".1" Grid.Column="2" Grid.Row="1" CornerRadius="10">-->
+		<StackPanel Orientation="Vertical" Grid.Row="1" Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Center">
+			<Image x:Name="Spinny"
+				   Grid.Column="1"
+				   VerticalAlignment="Top"
+				   Height="200"
+				   Width="200"
+				   Source="../Assets/blank.png"
+				   RenderOptions.BitmapInterpolationMode="HighQuality"
+				   Classes="spinny"/>
+
+			<Slider Name="TimelineSlider"
+					Width="300"
+					Value="{Binding SongProgress, Mode=TwoWay}"/>
+
+			<Slider Name="VolumeSlider"
+					Width="100"
+					Orientation="Horizontal"
+					Value="{Binding VolumeValue, Mode=TwoWay}"/>
+
+			<TextBlock Text="{Binding VolumeValue}"/>
+
+			<TextBlock Text="{Binding Current, StringFormat='{}Playing: {0}'}" />
+
+			<TextBlock Text="{Binding SongName, StringFormat='{}Name: {0}'}"/>
+
+			<TextBlock Text="{Binding SongLength, StringFormat='{}Length: {0:2f}'}"/>
+
+			<StackPanel VerticalAlignment="Bottom" Orientation="Horizontal" HorizontalAlignment="Center">
+				<Button Command="{Binding ReverseCommand}">back</Button>
+				<Button Content="{Binding IsPlaying}"
+						Command="{Binding TogglePlayCommand}"/>
+				<Button Command="{Binding ForwardCommand}">forward</Button>
+			</StackPanel>
+		</StackPanel>
+		<!--</Border>-->
+
+	</Grid>
+
+	<Window.Styles>
+		<Style Selector="Window">
+			<Setter Property="Background">
+				<Setter.Value>
+					<SolidColorBrush Opacity=".5"/>
+				</Setter.Value>
+			</Setter>
+		</Style>
+		<Style Selector="Button">
+			<Setter Property="Foreground" Value="Black"/>
+		</Style>
+		<Style Selector="ListBox">
+			<Setter Property="Background">
+				<Setter.Value>
+					<SolidColorBrush Opacity=".2"/>
+				</Setter.Value>
+			</Setter>
+		</Style>
+		<Style Selector="Image.spinny">
+			<Style.Animations>
+				<Animation Duration="0:0:1"
+						   IterationCount="INFINITE">
+					<KeyFrame Cue="0%">
+						<Setter Property="RotateTransform.Angle" Value="0" />
+					</KeyFrame>
+					<KeyFrame Cue="100%">
+						<Setter Property="RotateTransform.Angle" Value="360" />
+					</KeyFrame>
+				</Animation>
+			</Style.Animations>
+		</Style>
+	</Window.Styles>
 </Window>
