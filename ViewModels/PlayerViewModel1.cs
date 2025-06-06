@@ -20,7 +20,8 @@ public partial class PlayerViewModel : ViewModelBase
     public ObservableCollection<string> MusicListings { get; set; } = FileReaderService.GetAll();
 
     private int _currentPtr = 0;
-    public string Current => MusicListings.Count > 0 ? MusicListings[_currentPtr] : "none";
+
+    public string Current { get; internal set; }
 
     public bool IsPlaying { get; set; }
 
@@ -90,16 +91,30 @@ public partial class PlayerViewModel : ViewModelBase
 
     public ICommand ForwardCommand => _forwardCommand ??= new RelayCommand(() =>
     {
-        if (_currentPtr < MusicListings.Count - 1) ++_currentPtr;
-        OnPropertyChanged(nameof(Current));
+        if (_currentPtr < MusicListings.Count - 1)
+        {
+            _player.Stop();
+            IsPlaying = false;
+            Current = MusicListings[++_currentPtr];
+            _media = null;
+            OnPropertyChanged(nameof(Current));
+            OnPropertyChanged(nameof(IsPlaying));
+        }
     });
 
     private ICommand? _reverseCommand;
 
     public ICommand ReverseCommand => _reverseCommand ??= new RelayCommand(() =>
     {
-        if (_currentPtr > 0) --_currentPtr;
-        OnPropertyChanged(nameof(Current));
+        if (_currentPtr > 0)
+        {
+            _player.Stop();
+            IsPlaying = false;
+            Current = MusicListings[--_currentPtr];
+            _media = null;
+            OnPropertyChanged(nameof(Current));
+            OnPropertyChanged(nameof(IsPlaying));
+        }
     });
 
     private ICommand? _openFileDialogCommand;
@@ -146,6 +161,10 @@ public partial class PlayerViewModel : ViewModelBase
                          "--file-caching=300",
                          "--audio-time-stretch");
         _player = new(_VLCinvoke);
+
+        if (MusicListings.Count > 0)
+            Current = MusicListings[0];
+
         _timelineTimer = new()
         {
             Interval = TimeSpan.FromMilliseconds(100)

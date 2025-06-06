@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
 using Avalonia.Media;
@@ -14,5 +15,4 @@ public partial class MainWindow : Window
         InitializeComponent();
         this.DataContext = new PlayerViewModel();
     }
-
 }

@@ -33,6 +33,7 @@
 
 		<StackPanel Grid.Row="1" Grid.Column="1" Orientation="Vertical">
 			<ListBox ItemsSource="{Binding MusicListings}"
+					 SelectedItem="{Binding Current, Mode=TwoWay}"
 					 ScrollViewer.HorizontalScrollBarVisibility="Auto"/>
 			<Button Content="Change directory..."
 					Command="{Binding OpenFileDialogCommand}"/>
